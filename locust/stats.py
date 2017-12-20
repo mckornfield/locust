@@ -708,11 +708,8 @@ def requests_csv(append_file=False, include_totals=True):
         ])
     )
 
-    maybe_agg_stats = [] 
-    if include_totals:
-        maybe_agg_stats = [runners.locust_runner.stats.total]
     elapsed_time = int(time.time()) - runners.locust_runner.runner_start_time
-    for s in chain(sort_stats(runners.locust_runner.request_stats), maybe_agg_stats):
+    for s in sort_stats(runners.locust_runner.request_stats):
         rows.append('"%s","%s",%i,%i,%i,%i,%i,%i,%i,%i,%.2f' % (
             s.method,
             s.name,
@@ -724,7 +721,24 @@ def requests_csv(append_file=False, include_totals=True):
             s.min_response_time or 0,
             s.max_response_time,
             s.avg_content_length,
-            s.total_rps,
+            s.current_rps,
+        ))
+
+    if include_totals:
+        # report aggregated RPS
+        agg_stats = runners.locust_runner.stats.total
+        rows.append('"%s","%s",%i,%i,%i,%i,%i,%i,%i,%i,%.2f' % (
+            agg_stats.method,
+            agg_stats.name,
+            elapsed_time,
+            agg_stats.num_requests,
+            agg_stats.num_failures,
+            agg_stats.median_response_time,
+            agg_stats.avg_response_time,
+            agg_stats.min_response_time or 0,
+            agg_stats.max_response_time,
+            agg_stats.avg_content_length,
+            agg_stats.total_rps,
         ))
     return "\n".join(rows)
 
