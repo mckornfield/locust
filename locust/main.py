@@ -511,8 +511,14 @@ def main():
         print_stats(runners.locust_runner.request_stats)
         print_percentile_stats(runners.locust_runner.request_stats)
         if options.csvfilebase:
+            # write out sliding window stats
             write_stat_csvs(options.csvfilebase,
-                            options.csvappend)
+                            append_file=options.csvappend)
+            
+            # write out overall stats
+            write_stat_csvs(options.csvfilebase+"_total",
+                            append_file=False,
+                            get_current=False)
         print_error_report()
         sys.exit(code)
     
