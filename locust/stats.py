@@ -9,7 +9,6 @@ import six
 from six.moves import xrange
 
 from . import events
-from . import runners
 from .exception import StopLocust
 from .log import console_logger
 
@@ -594,12 +593,12 @@ global_stats = RequestStats()
 """
 A global instance for holding the statistics. Should be removed eventually.
 """
+# This is really ugly, TODO: fix
+from . import runners
 
 def on_request_success(request_type, name, response_time, response_length, **kwargs):
     global_stats.log_request(request_type, name, response_time, response_length)
 
-def on_request_failure(request_type, name, response_time, exception, **kwargs):
-    global_stats.log_request(request_type, name, response_time, 0)
     global_stats.log_error(request_type, name, exception)
 
 def on_report_to_master(client_id, data):
