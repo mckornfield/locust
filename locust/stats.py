@@ -599,8 +599,6 @@ from . import runners
 def on_request_success(request_type, name, response_time, response_length, **kwargs):
     global_stats.log_request(request_type, name, response_time, response_length)
 
-    global_stats.log_error(request_type, name, exception)
-
 def on_report_to_master(client_id, data):
     data["stats"] = global_stats.serialize_stats()
     data["stats_total"] = global_stats.total.get_stripped_report()
@@ -637,7 +635,6 @@ def on_slave_report(client_id, data):
     
 
 events.request_success += on_request_success
-events.request_failure += on_request_failure
 events.report_to_master += on_report_to_master
 events.slave_report += on_slave_report
 
